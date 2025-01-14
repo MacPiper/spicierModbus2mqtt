@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # spicierModbus2mqtt - Modbus TCP/RTU to MQTT bridge (and vice versa)
 # https://github.com/mbs38/spicierModbus2mqtt 
 #
@@ -29,7 +30,6 @@
 
 
 
-#!/usr/bin/env python
 
 import argparse
 import time
