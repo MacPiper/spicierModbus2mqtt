@@ -189,12 +189,8 @@ class DataTypes:
 
     def parsefloat32BE(refobj,msg):
         try:
-            out=None
-            #value=int(msg)
-            #if value > 4294967295 or value < 0:
-            #    out = None
-            #else:
-            #    out=[int(value&0x0000FFFF),int(value>>16)]
+            floatAsBytes = struct.pack("f", float(msg))
+            out=floatAsBytes[0] + (floatAsBytes[1]<<8), floatAsBytes[2] + (floatAsBytes[3]<<8)
         except:
             out=None
         return out
