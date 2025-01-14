@@ -26,11 +26,7 @@
 # - Eclipse Paho for Python - http://www.eclipse.org/paho/clients/python/
 # - pymodbus - https://github.com/riptideio/pymodbus
 
-# Modification by MacPiper Nov 29th 2020:
-# Added new reference types uint8LSB and uint8MSB and related handlers (works in rw and r mode only)
-# As these types are smaller than the write unit "WORD" (register size, 16bit), the 16 bit value received through modbus (combine-function) 
-# is stored for both to be able to calclate the whole 16bit to be written to modbus from received through MQTT (parse-function) which has a lenth
-# of 8 bit only. For this purpose the additional attribute rawValue gets initialized and gets used for uint8LSB and uint8MSB only.
+
 
 
 #!/usr/bin/env python
@@ -186,25 +182,25 @@ class Poller:
             try:
                 time.sleep(0.002)
                 if self.functioncode == 3:
-                    result = await master.read_holding_registers(self.reference, self.size, slave=self.slaveid)
+                    result = await master.read_holding_registers(address=self.reference, count=self.size, slave=self.slaveid)
                     if result.function_code < 0x80:
                         data = result.registers
                     else:
                         failed = True
                 if self.functioncode == 1:
-                    result = await master.read_coils(self.reference, self.size, slave=self.slaveid)
+                    result = await master.read_coils(address=self.reference, count=self.size, slave=self.slaveid)
                     if result.function_code < 0x80:
                         data = result.bits
                     else:
                         failed = True
                 if self.functioncode == 2:
-                    result = await master.read_discrete_inputs(self.reference, self.size, slave=self.slaveid)
+                    result = await master.read_discrete_inputs(address=self.reference, count=self.size, slave=self.slaveid)
                     if result.function_code < 0x80:
                         data = result.bits
                     else:
                         failed = True
                 if self.functioncode == 4:
-                    result = await master.read_input_registers(self.reference, self.size, slave=self.slaveid)
+                    result = await master.read_input_registers(address=self.reference, count=self.size, slave=self.slaveid)
                     if result.function_code < 0x80:
                         data = result.registers
                     else:
@@ -560,7 +556,7 @@ async def async_main():
         master = AsyncModbusSerialClient(port=args.rtu, stopbits = 1, bytesize = 8, parity = parity, baudrate = int(args.rtu_baud), timeout=args.set_modbus_timeout)
     
     elif args.tcp:
-        master = AsyncModbusTcpClient(args.tcp, port=args.tcp_port,client_id="modbus2mqtt", clean_session=False)
+        master = AsyncModbusTcpClient(host=args.tcp, port=args.tcp_port)
     else:
         print("You must specify a modbus access method, either --rtu or --tcp")
         sys.exit(1)
