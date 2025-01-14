@@ -1,0 +1,3 @@
+#!/bin/sh
+# This wrapper is necessary to pass values from env_files (they are environment variables accessable only during runtime) to call parameters
+python -u modbus2mqtt.py --mqtt-host $MQTT_HOST --mqtt-user $MQTT_USER --mqtt-pass $MQTT_PASS --config myconfig --tcp $MODBUS_HOST

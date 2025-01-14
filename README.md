@@ -198,6 +198,24 @@ So what exactly do they do? Completely different things actually.
 Docker
 ------
 
-spicierModbus2mqtt can be run as a docker container, using the included Dockerfile. It allows all usual configuration options, with the expectation that it's configuration is at `/app/conf/modbus2mqtt.csv`. For example:
+spicierModbus2mqtt can be run as a docker container using docker compose. For preparation the files modbus.env.template and mqtt.env.template have to be renamed to modbus.env and mqtt.env and the parameters needs to be filled in, for example like this:
 
-`docker build -t modbus2mqtt . && docker run -v $(pwd)/example.csv:/app/conf/modbus2mqtt.csv modbus2mqtt --tcp <modbus-tcp-host> --mqtt-host <mqtt-host>`
+**mqtt.env**
+```
+MQTT_HOST=raspi4
+MQTT_USER=mqttuser
+MQTT_PASS=secretpass
+```
+
+**modbus.env:**
+```
+MODBUS_HOST=192.168.178.105
+```
+
+The configuration needs to be provided with filename myconfig (based on example.csv). The container can be started through
+```
+docker compose up -d
+```
+Within the container the script gets started with the following parameters (the values from the env-files will be put in place of the environment variables):
+
+`modbus2mqtt.py --mqtt-host $MQTT_HOST --mqtt-user $MQTT_USER --mqtt-pass $MQTT_PASS --config myconfig --tcp $MODBUS_HOST`

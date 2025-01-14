@@ -1,0 +1,20 @@
+services: 
+    modbus2mqtt-tst: 
+        container_name: modbus2mqtt-tst
+        env_file:
+            - mqtt.env # login data to mqtt broker
+            - modbus.env # host name or ip-address of modbus slave
+        volumes:
+            - .:/usr/src/app
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro        
+        build:
+            context: .
+        restart: unless-stopped
+        environment:
+            - TZ=Europe/Berlin    
+            - PYTHONUNBUFFERED=1            
+            #- DEBUG=1        
+        labels:
+            - "napnap75.backup.dirs=/home/pi/modbus2mqtt"
+            #- "napnap75.backup.stopstart"

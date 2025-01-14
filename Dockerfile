@@ -1,16 +1,13 @@
-FROM python:alpine
+FROM python:3-slim
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
-COPY modbus2mqtt.py ./
-COPY modbus2mqtt modbus2mqtt/
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN mkdir -p /app/conf/
+# Values from files define in docker-compose.yml env_file section are not available here (not during build)
+# but only in running container so we can't use them as parameter values for modbus2mqtt.py
+# Call wrapperscript instead which calls modbus2mqtt.py with parameters from env_files
+CMD [ "sh","/usr/src/app/launchModbus2mqtt"]
 
-# upgrade pip to avoid warnings during the docker build
-RUN pip install --root-user-action=ignore --upgrade pip
 
-RUN pip install --root-user-action=ignore --no-cache-dir pyserial pymodbus
-RUN pip install --root-user-action=ignore --no-cache-dir paho-mqtt
-
-ENTRYPOINT [ "python", "-u", "./modbus2mqtt.py", "--config", "/app/conf/modbus2mqtt.csv" ]
